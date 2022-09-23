@@ -1,0 +1,132 @@
+==Maintance commands==
+
+Check for updates apt-get update
+install updates apt-get upgrade
+sudo apt update && sudo apt upgrade
+
+== Install LAMP stack==
+Apache - apt install apache2
+apt-get install apache2-utils
+
+== Adjust the firewall rule UFW Uncomplicated Fire Wall==
+List currently available UFW application profiles - ufw app list
+Allow port 80 http traffic - ufw allow in "Apache"
+Check status - ufw status
+Allow port 22 traffic - ufw allow ssh
+Delete rule by number - ufw status numbered
+					  - ufw delete 4 
+					  
+curl http://icanhazip.com
+
+== Check folder level access permissions ==
+ ls -la /home
+ 
+== Find port & PID info ==
+install netstat - root@Mars:~# sudo apt-get install net-tools
+root@Mars:~# netstat -ltnp
+
+
+
+== Installing MySQL == 
+apt install mysql-server
+root@ubuntu-s-4vcpu-8gb-amd-nyc1-01:~# mysql
+mysql> exit
+
+==  Installing PHP ==
+apt install php libapache2-mod-php php-mysql
+php -v
+apt-get install phpmyadmin
+Link php with apache - ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-enabled/phpmadmin.conf
+Apache reload - /etc/init.d/apache2 reload
+
+== Log location ==
+/var/log/apache2
+
+== MySQL == 
+Create db -  CREATE DATABASE testDB
+Create user - CREATE USER 'testuser'@'%' IDENTIFIED BY 'password';
+View dbs - SHOW DATABASES;
+Grant permission to DB - GRANT ALL ON example_database.* TO 'example_user'@'%';
+Test permissions to new user - mysql -u testuser -p
+Create table - 
+
+    CREATE TABLE testDB.todo_list (
+    	item_id INT AUTO_INCREMENT,
+    	content VARCHAR(255),
+    	PRIMARY KEY(item_id)
+    );
+
+	Add records to the table - 
+INSERT INTO testDB.todo_list (content) VALUES ("My fifth important item");
+
+SELECT * FROM testDB.todo_list;
+
+== Rename server ==
+ echo "Arc" > /etc/hostname
+ hostname -F /etc/hostname
+ 
+ == change time zone ==
+ dpkg-reconfigure tzdata
+ 
+ root@ubuntu-s-4vcpu-8gb-amd-nyc1-01:~# date
+
+ == Create new user & add to sudo group ==
+ adduser bob sudo
+ 
+ == Install xfce4 and tightvnc server ==
+ sudo apt-get install xfce4 xfce4-goodies tightvncserver
+ 
+ bob@Arc:~$ vncserver
+ Kill existing vncserver - bob@Arc:~$ vncserver -kill :1
+ backup xstartp file - bob@Arc:~$ mv ~/.vnc/xstartup ~/.vnc/xstartup.bak
+ new xstartup file - bob@Arc:~$ nano ~/.vnc/xstartup
+ 
+#!/bin/sh
+xrdb $HOME/.Xresources
+startxfce4 &
+
+ rw and execuitable rights to bob - bob@Arc:~/.vnc$ sudo chmod +x xstartup
+ vnc service configration - bob@Arc:~/.vnc$ sudo nano /etc/init.d/vncserver
+ 
+#!/bin/bash
+PATH="$PATH:/usr/bin"
+export USER="bob"
+DISPLAY="1"
+DEPTH="16"
+GEOMETRY="1024X768"
+OPTIONS="-depth ${DEPTH} -geometry ${GEOMETRY} :${DISPLAY} -localhost"
+. /lib/lsb/init-functions
+
+case "$1" in
+start)
+log_action_begin_msg "Starting vncserver for user '${USER}' on localhost:${DISPLAY}"
+su ${USER} -c "/usr/bin/vncserver ${OPTIONS}"
+;;
+
+stop)
+log_action_begin_msg "Stoping vncserver for user '${USER}' on localhost:${DISPLAY}"
+su ${USER} -c "/usr/bin/vncserver -kill :${DISPLAY}"
+;;
+
+restart)
+$0 stop
+$0 start
+;;
+esac
+exit 0
+
+rw and execuitable rights to bob - bob@Arc:/etc/init.d$ sudo chmod +x vncserver
+test vncserver - sudo service vncserver start
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-22-04
+https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-22-04
+https://linuxize.com/post/how-to-install-and-configure-vnc-on-ubuntu-20-04/
+
+ssh -L 5901:127.0.0.1:59000 -N -f -l ubuntu 129.154.36.246
+Change user - su - bob
+
+ssh -L 5901:localhost:5901 ubuntu@144.24.137.234 -i VNC_KEY
+
+sudo apt install vanilla-gnome-desktop vanilla-gnome-default-settings
+
+ssh -L 5901:localhost:5901 ubuntu@144.24.137.234 -i VNC_KEY
